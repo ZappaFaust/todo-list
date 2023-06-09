@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stopwatch with Alarm</title>
+  <style>
+    .container {
+      text-align: center;
+      margin-top: 50px;
+    }
+    
+    #display {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    
+    button {
+      font-size: 24px;
+      padding: 10px 20px;
+      margin-bottom: 10px;
+    }
+    
+    input[type="time"] {
+      font-size: 24px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Stopwatch with Alarm</h1>
+    <div id="display">00:00:00</div>
+    <button id="startButton">Start</button>
+    <button id="stopButton">Stop</button>
+    <button id="resetButton">Reset</button>
+    <br>
+    <label for="alarmTime">Alarm Time:</label>
+    <input type="time" id="alarmTime">
+    <button id="setAlarmButton">Set Alarm</button>
+  </div>
+
+  <script>
+    var stopwatch;
+    var startTime;
+    var isRunning = false;
+    var alarmTime;
+
+    function startTimer() {
+      if (!isRunning) {
+        startTime = Date.now();
+        stopwatch = setInterval(updateTimer, 10);
+        isRunning = true;
+      }
+    }
+
+    function stopTimer() {
+      if (isRunning) {
+        clearInterval(stopwatch);
+        isRunning = false;
+      }
+    }
+
+    function resetTimer() {
+      stopTimer();
+      document.getElementById("display").textContent = "00:00:00";
+    }
+
+    function updateTimer() {
+      var currentTime = Date.now();
+      var elapsedTime = new Date(currentTime - startTime);
+      var minutes = elapsedTime.getUTCMinutes();
+      var seconds = elapsedTime.getUTCSeconds();
+      var milliseconds = Math.floor(elapsedTime.getUTCMilliseconds() / 10);
+
+      minutes = (minutes < 10) ? "0" + minutes : minutes;
+      seconds = (seconds < 10) ? "0" + seconds : seconds;
+      milliseconds = (milliseconds < 10) ? "0" + milliseconds : milliseconds;
+
+      document.getElementById("display").textContent = minutes + ":" + seconds + ":" + milliseconds;
+
+      checkAlarmTime(minutes, seconds); // Check if the current time matches the alarm time
+    }
+
+    function checkAlarmTime(minutes, seconds) {
+      if (alarmTime && minutes == alarmTime.substr(0, 2) && seconds == alarmTime.substr(3, 2)) {
+        playAlarm();
+      }
+    }
+
+    function setAlarm() {
+      alarmTime = document.getElementById("alarmTime").value;
+      alert("Alarm set for " + alarmTime);
+    }
+
+    function playAlarm() {
+      // Replace the alarm sound with a beep
+      var beep = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=');
+      beep.play();
+      stopTimer();
+    }
+
+    document.getElementById("startButton").addEventListener("click", startTimer);
+    document.getElementById("stopButton").addEventListener("click", stopTimer);
+    document.getElementById("resetButton").addEventListener("click", resetTimer);
+    document.getElementById("setAlarmButton").addEventListener("click", setAlarm);
+  </script>
+</body>
+</html>
